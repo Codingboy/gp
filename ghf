@@ -1,0 +1,28 @@
+#! /bin/bash
+
+if [ $# -lt 1 ]
+then
+	echo "$0 <filename> [<fileextension>]"
+	exit 1
+fi
+FILE=$1
+EXTENSION="hpp"
+if [ $# -eq 2 ]
+then
+	EXTENSION=$2
+fi
+AUTHOR="Daniel Tkocz"
+
+echo "/**" > "$FILE.$EXTENSION"
+echo " * " >> "$FILE.$EXTENSION"
+echo " * @author $AUTHOR" >> "$FILE.$EXTENSION"
+echo " * @copyright @see COPYRIGHT.txt" >> "$FILE.$EXTENSION"
+echo " */" >> "$FILE.$EXTENSION"
+echo "#ifndef ${$FILE^^}_${$EXTENSION^^}" >> "$FILE.$EXTENSION"
+echo "#define ${$FILE^^}_${$EXTENSION^^}" >> "$FILE.$EXTENSION"
+echo "" >> "$FILE.$EXTENSION"
+echo "#include \"${FILE}_${EXTENSION}\"" >> "$FILE.$EXTENSION"
+echo "" >> "$FILE.$EXTENSION"
+echo "" >> "$FILE.$EXTENSION"
+echo "" >> "$FILE.$EXTENSION"
+echo "#endif" >> "$FILE.$EXTENSION"

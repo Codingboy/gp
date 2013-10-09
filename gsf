@@ -1,0 +1,22 @@
+#! /bin/bash
+
+if [ $# -lt 1 ]
+then
+	echo "$0 <filename> [<fileextension>] [<headerfileextension>]"
+	exit 1
+fi
+FILE=$1
+EXTENSION="cpp"
+HEXTENSION="hpp"
+if [ $# -gt 1 ]
+then
+	EXTENSION=$2
+fi
+if [ $# -gt 2 ]
+then
+	HEXTENSION=$3
+fi
+
+echo "#include \"${FILE}_${HEXTENSION}\"" >> "$FILE.$EXTENSION"
+echo "" >> "$FILE.$EXTENSION"
+echo "" >> "$FILE.$EXTENSION"
