@@ -321,14 +321,11 @@ else
 	echo "CC=${COMPILER}" >> Makefile
 	if [ "$LANGUAGE" = "c" ]
 	then
-		echo "CFLAGS=-std=c99 -g -Wall -c -I\$(INCLUDE) -D_GNU_SOURCE -fpic -DPIC -Os -fPIC" >> Makefile
-	else
-		if [ "$LANGUAGE" = "c++" ]
-		then
-			echo "CFLAGS=-std=c++0x -g -Wall -Os -c -I\$(INCLUDE) -fPIC" >> Makefile
-		else
-			echo "CFLAGS=" >> Makefile
-		fi
+		echo "CFLAGS=-std=c99 -g -Wall -c -I\$(INCLUDE) -Os" >> Makefile
+	fi
+	if [ "$LANGUAGE" = "c++" ]
+	then
+		echo "CFLAGS=-std=c++0x -g -Wall -Os -c -I\$(INCLUDE)" >> Makefile
 	fi
 	echo "LFLAGS=-L\$(LIB)" >> Makefile
 	echo "" >> Makefile
@@ -344,7 +341,7 @@ else
 	echo "MODULES_=" >> Makefile
 	echo "MODULES=\$(addsuffix .o, \$(addprefix \$(OBJ)/, \$(MODULES_)))" >> Makefile
 	echo "" >> Makefile
-	echo ".PHONY: all help installdep version major minor build clean commit install uninstall doc debug leakcheck profile run trac strip" >> Makefile
+	echo ".PHONY: all time help installdep version major minor build clean commit install uninstall doc debug leakcheck profile run trac strip" >> Makefile
 	echo "" >> Makefile
 	echo "all: ${NAME}" >> Makefile
 	echo "" >> Makefile
@@ -481,6 +478,9 @@ else
 	echo "" >> Makefile
 	echo "run: \$(TARGET)" >> Makefile
 	echo "	\$(TARGET) \$(ARGS)" >> Makefile
+	echo "" >> Makefile
+	echo "time: \$(TARGET)" >> Makefile
+	echo "	time \$(TARGET) \$(ARGS)" >> Makefile
 	echo "" >> Makefile
 	echo "trac:" >> Makefile
 	echo "	tracd -s --port 8000 ./.trac &" >> Makefile
