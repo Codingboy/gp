@@ -121,6 +121,42 @@ then
 		SOURCEFILEEXTENSION="c"
 	fi
 fi
+if [ "$LANGUAGE" = "uc" ]
+then
+	if [ -z "$COMPILER" ]
+	then
+		echo "no compiler specified: using avr-gcc"
+		COMPILER="avr-gcc"
+	fi
+	if [ -z "$HEADERFILEEXTENSION" ]
+	then
+		echo "no headerfileextension specified: using h"
+		HEADERFILEEXTENSION="h"
+	fi
+	if [ -z "$SOURCEFILEEXTENSION" ]
+	then
+		echo "no sourcefileextension specified: using c"
+		SOURCEFILEEXTENSION="c"
+	fi
+fi
+if [ "$LANGUAGE" = "c++" ]
+then
+	if [ -z "$COMPILER" ]
+	then
+		echo "no compiler specified: using avr-g++"
+		COMPILER="avr-g++"
+	fi
+	if [ -z "$HEADERFILEEXTENSION" ]
+	then
+		echo "no headerfileextension specified: using hpp"
+		HEADERFILEEXTENSION="hpp"
+	fi
+	if [ -z "$SOURCEFILEEXTENSION" ]
+	then
+		echo "no sourcefileextension specified: using cpp"
+		SOURCEFILEEXTENSION="cpp"
+	fi
+fi
 
 if [ -e "$PROJECTNAME" ]
 then
@@ -382,9 +418,9 @@ else
 	echo "	\$(MKDIR) \$(LIB)" >> Makefile
 	echo "	ar r \$@ \$^" >> Makefile
 	echo "" >> Makefile
-	echo "\$(BIN)/${NAME}: \$(OBJ)/${NAME}.o \$(LIB)/lib${NAME}.a" >> Makefile
+	echo "\$(BIN)/${NAME}: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
 	echo "	\$(MKDIR) \$(BIN)" >> Makefile
-	echo "	\$(CC) -o \$@ \$< \$(LFLAGS) -l${NAME}" >> Makefile
+	echo "	\$(CC) -o \$@ \$^ \$(LFLAGS)" >> Makefile
 	echo "	make build" >> Makefile
 	echo "" >> Makefile
 	echo "major:" >> Makefile
