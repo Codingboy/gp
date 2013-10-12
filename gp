@@ -344,6 +344,17 @@ else
 	echo "TARGET=\$(BIN)/${NAME}" > Makefile
 	echo "ARGS=" >> Makefile
 	echo "" >> Makefile
+	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
+	then
+		echo "MCU=atmega32u4" >> Makefile
+		echo "ARCH=AVR8" >> Makefile
+		echo "BOARD=USBKEY" >> Makefile
+		echo "F_CPU=16000000" >> Makefile
+		echo "F_USB=$(F_CPU)" >> Makefile
+		echo "F_CLOCK=$(F_CPU)" >> Makefile
+		echo "CONTROLLER=-mmcu=$(MCU)" >> Makefile
+	fi
+	echo "" >> Makefile
 	echo "BIN=bin" >> Makefile
 	echo "SBIN=sbin" >> Makefile
 	echo "SRC=src" >> Makefile
@@ -363,6 +374,10 @@ else
 	then
 		echo "CFLAGS=-std=c++0x -g -Wall -Os -c -I\$(INCLUDE)" >> Makefile
 	fi
+	if [ "$LANGUAGE" = "uc" ]
+	then
+		echo "CFLAGS=-Wall -g -std=c99 -Os -I\$(INCLUDE) \$(CONTROLLER) -DF_CPU=\$(F_CPU) -DF_USB=\$(F_USB) -DMCU=\$(MCU) -DARCH=\$(ARCH) -DBOARD=\$(BOARD) -DF_CLOCK=\$(F_CLOCK)" >> Makefile
+	fi
 	echo "LFLAGS=-L\$(LIB)" >> Makefile
 	echo "" >> Makefile
 	echo "MKDIR=mkdir -p" >> Makefile
@@ -377,7 +392,14 @@ else
 	echo "MODULES_=" >> Makefile
 	echo "MODULES=\$(addsuffix .o, \$(addprefix \$(OBJ)/, \$(MODULES_)))" >> Makefile
 	echo "" >> Makefile
-	echo ".PHONY: all time help installdep version major minor build clean commit install uninstall doc debug leakcheck profile run trac strip" >> Makefile
+	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
+	then
+		echo ".PHONY: all time help installdep version major minor build clean commit install uninstall doc debug leakcheck profile run trac strip" >> Makefile
+	fi
+	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
+	then
+		echo ".PHONY: all time help installdep version major minor build clean commit doc trac strip flash ${NAME}" >> Makefile
+	fi
 	echo "" >> Makefile
 	echo "all: ${NAME}" >> Makefile
 	echo "" >> Makefile
@@ -392,36 +414,95 @@ else
 	echo "	\$(ECHO) \"version\"" >> Makefile
 	echo "	\$(ECHO) \"clean\"" >> Makefile
 	echo "	\$(ECHO) \"installdep\"" >> Makefile
-	echo "	\$(ECHO) \"install\"" >> Makefile
-	echo "	\$(ECHO) \"uninstall\"" >> Makefile
-	echo "	\$(ECHO) \"debug\"" >> Makefile
-	echo "	\$(ECHO) \"leakcheck\"" >> Makefile
-	echo "	\$(ECHO) \"profile\"" >> Makefile
 	echo "	\$(ECHO) \"strip\"" >> Makefile
+	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
+	then
+		echo "	\$(ECHO) \"install\"" >> Makefile
+		echo "	\$(ECHO) \"uninstall\"" >> Makefile
+		echo "	\$(ECHO) \"debug\"" >> Makefile
+		echo "	\$(ECHO) \"leakcheck\"" >> Makefile
+		echo "	\$(ECHO) \"profile\"" >> Makefile
+	fi
+	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
+	then
+		echo "	\$(ECHO) \"flash\"" >> Makefile
+	fi
 	echo "" >> Makefile
 	echo "installdep:" >> Makefile
 	echo "	\$(INSTALL) ${COMPILER}" >> Makefile
 	echo "	\$(INSTALL) doxygen" >> Makefile
-	echo "	\$(INSTALL) valgrind" >> Makefile
-	echo "	\$(INSTALL) kcachegrind" >> Makefile
 	echo "	\$(INSTALL) git" >> Makefile
 	echo "	\$(INSTALL) firefox" >> Makefile
 	echo "	\$(INSTALL) binutils" >> Makefile
 	echo "	\$(INSTALL) tar" >> Makefile
 	echo "	\$(INSTALL) python" >> Makefile
-	echo "	\$(INSTALL) ddd" >> Makefile
-	echo "	\$(INSTALL) gdb" >> Makefile
 	echo "	\$(INSTALL) trac" >> Makefile
 	echo "	\$(INSTALL) trac-git" >> Makefile
+	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
+	then
+		echo "	\$(INSTALL) valgrind" >> Makefile
+		echo "	\$(INSTALL) kcachegrind" >> Makefile
+		echo "	\$(INSTALL) ddd" >> Makefile
+		echo "	\$(INSTALL) gdb" >> Makefile
+	fi
+	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
+	then
+		echo "	\$(INSTALL) avr-libc" >> Makefile
+		echo "	\$(INSTALL) gcc-avr" >> Makefile
+		echo "	\$(INSTALL) binutils-avr" >> Makefile
+		echo "	\$(INSTALL) avrdude" >> Makefile
+	fi
 	echo "" >> Makefile
+	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
+	then
+		echo "flash: \$(BIN)/${NAME}.hex" >> Makefile
+		echo "	avrdude -p m32u4 -P /dev/ttyACM0 -c avr109 -U flash:w:$<:i" >> Makefile
+		echo "	make build" >> Makefile
+		echo "" >> Makefile
+		echo "$(BIN)/${NAME}.elf: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
+		echo "	\$(CC) \$(CONTROLLER) -o \$@ \$^" >> Makefile
+		echo "" >> Makefile
+		echo "\$(BIN)/${NAME}.hex: \$(BIN)/${NAME}.elf" >> Makefile
+		echo "	avr-objcopy -j .text -j .data -O ihex \$^ \$@" >> Makefile
+		echo "" >> Makefile
+		echo "${NAME}: flash" >> Makefile
+		echo "" >> Makefile
+	fi
+	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
+	then
+		echo "\$(BIN)/${NAME}: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
+		echo "	\$(MKDIR) \$(BIN)" >> Makefile
+		echo "	\$(CC) -o \$@ \$^ \$(LFLAGS)" >> Makefile
+		echo "	make build" >> Makefile
+		echo "" >> Makefile
+		echo "install: all" >> Makefile
+		echo "	\$(CP) \$(BIN)/${NAME} /bin/" >> Makefile
+		echo "	chmod a+x /bin/${NAME}" >> Makefile
+		echo "" >> Makefile
+		echo "uninstall: all" >> Makefile
+		echo "	\$(RM) /bin/${NAME}" >> Makefile
+		echo "" >> Makefile
+		echo "${NAME}: \$(BIN)/${NAME}" >> Makefile
+		echo "" >> Makefile
+		echo "debug: \$(TARGET)" >> Makefile
+		echo "	ddd \$(TARGET) \$(ARGS)" >> Makefile
+		echo "" >> Makefile
+		echo "leakcheck: \$(TARGET)" >> Makefile
+		echo "	valgrind --leak-check=full --track-origins=yes --show-reachable=yes \$(TARGET) \$(ARGS)" >> Makefile
+		echo "" >> Makefile
+		echo "profile: \$(TARGET)" >> Makefile
+		echo "	valgrind --tool=cachegrind \$(TARGET) \$(ARGS)" >> Makefile
+		echo "" >> Makefile
+		echo "run: \$(TARGET)" >> Makefile
+		echo "	\$(TARGET) \$(ARGS)" >> Makefile
+		echo "" >> Makefile
+		echo "time: \$(TARGET)" >> Makefile
+		echo "	time \$(TARGET) \$(ARGS)" >> Makefile
+		echo "" >> Makefile
+	fi
 	echo "\$(LIB)/lib${NAME}.a: \$(MODULES)" >> Makefile
 	echo "	\$(MKDIR) \$(LIB)" >> Makefile
 	echo "	ar r \$@ \$^" >> Makefile
-	echo "" >> Makefile
-	echo "\$(BIN)/${NAME}: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
-	echo "	\$(MKDIR) \$(BIN)" >> Makefile
-	echo "	\$(CC) -o \$@ \$^ \$(LFLAGS)" >> Makefile
-	echo "	make build" >> Makefile
 	echo "" >> Makefile
 	echo "major:" >> Makefile
 	echo "	python \$(SCRIPT)/v.py \$(INCLUDE)/version.${HEADERFILEEXTENSION} --major" >> Makefile
@@ -483,27 +564,9 @@ else
 	echo "	\$(RM) \$(INCLUDE)/*~" >> Makefile
 	echo "	\$(RM) doxygen.log" >> Makefile
 	echo "" >> Makefile
-	echo "install: all" >> Makefile
-	echo "	\$(CP) \$(BIN)/${NAME} /bin/" >> Makefile
-	echo "	chmod a+x /bin/${NAME}" >> Makefile
-	echo "" >> Makefile
-	echo "uninstall: all" >> Makefile
-	echo "	\$(RM) /bin/${NAME}" >> Makefile
-	echo "" >> Makefile
 	echo "doc: Doxyfile \$(SRC)/* \$(INCLUDE)/* mainpage" >> Makefile
 	echo "	\$(MKDIR) \$(DOC)" >> Makefile
 	echo "	doxygen" >> Makefile
-	echo "" >> Makefile
-	echo "${NAME}: \$(BIN)/${NAME}" >> Makefile
-	echo "" >> Makefile
-	echo "debug: \$(TARGET)" >> Makefile
-	echo "	ddd \$(TARGET) \$(ARGS)" >> Makefile
-	echo "" >> Makefile
-	echo "leakcheck: \$(TARGET)" >> Makefile
-	echo "	valgrind --leak-check=full --track-origins=yes --show-reachable=yes \$(TARGET) \$(ARGS)" >> Makefile
-	echo "" >> Makefile
-	echo "profile: \$(TARGET)" >> Makefile
-	echo "	valgrind --tool=cachegrind \$(TARGET) \$(ARGS)" >> Makefile
 	echo "" >> Makefile
 	echo "\$(OBJ)/%.o: \$(SRC)/%.${SOURCEFILEEXTENSION} \$(INCLUDE)/%.${HEADERFILEEXTENSION}" >> Makefile
 	echo "	\$(MKDIR) \$(OBJ)" >> Makefile
@@ -511,12 +574,6 @@ else
 	echo "" >> Makefile
 	echo "\$(INCLUDE)/%.${HEADERFILEEXTENSION}:" >> Makefile
 	echo "	touch \$@" >> Makefile
-	echo "" >> Makefile
-	echo "run: \$(TARGET)" >> Makefile
-	echo "	\$(TARGET) \$(ARGS)" >> Makefile
-	echo "" >> Makefile
-	echo "time: \$(TARGET)" >> Makefile
-	echo "	time \$(TARGET) \$(ARGS)" >> Makefile
 	echo "" >> Makefile
 	echo "trac:" >> Makefile
 	echo "	tracd -s --port 8000 ./.trac &" >> Makefile
