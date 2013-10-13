@@ -13,6 +13,8 @@ echo "$0 -n <projectname> [-c <compiler> -h <headerfileextension> -s <sourcefile
 echo "valid languages:"
 echo "c++"
 echo "c"
+echo "uc++"
+echo "uc"
 echo "valid licenses:"
 echo "mit"
 echo "gpl"
@@ -66,7 +68,7 @@ then
 	echo "no language specified: using c++"
 	LANGUAGE="c++"
 fi
-if [ "$LANGUAGE" != "c++" ] && [ "$LANGUAGE" != "c" ]
+if [ "$LANGUAGE" != "c++" ] && [ "$LANGUAGE" != "c" ] && [ "$LANGUAGE" != "uc++" ] && [ "$LANGUAGE" != "uc" ]
 then
 	echo "specified language not supported"
 	exit 1
@@ -139,7 +141,7 @@ then
 		SOURCEFILEEXTENSION="c"
 	fi
 fi
-if [ "$LANGUAGE" = "c++" ]
+if [ "$LANGUAGE" = "uc++" ]
 then
 	if [ -z "$COMPILER" ]
 	then
@@ -350,9 +352,9 @@ else
 		echo "ARCH=AVR8" >> Makefile
 		echo "BOARD=USBKEY" >> Makefile
 		echo "F_CPU=16000000" >> Makefile
-		echo "F_USB=$(F_CPU)" >> Makefile
-		echo "F_CLOCK=$(F_CPU)" >> Makefile
-		echo "CONTROLLER=-mmcu=$(MCU)" >> Makefile
+		echo "F_USB=\$(F_CPU)" >> Makefile
+		echo "F_CLOCK=\$(F_CPU)" >> Makefile
+		echo "CONTROLLER=-mmcu=\$(MCU)" >> Makefile
 	fi
 	echo "" >> Makefile
 	echo "BIN=bin" >> Makefile
@@ -376,7 +378,8 @@ else
 	fi
 	if [ "$LANGUAGE" = "uc" ]
 	then
-		echo "CFLAGS=-Wall -g -std=c99 -Os -I\$(INCLUDE) \$(CONTROLLER) -DF_CPU=\$(F_CPU) -DF_USB=\$(F_USB) -DMCU=\$(MCU) -DARCH=\$(ARCH) -DBOARD=\$(BOARD) -DF_CLOCK=\$(F_CLOCK)" >> Makefile
+		echo "USBFLAGS=-DUSE_FLASH_DESCRIPTORS -DUSE_STATIC_OPTIONS=\"(USE_DEVICE_OPT_FULLSPEED | USB_OPT_AUTO_PLL)\" -DUSB_DEVICE_ONLY -DCONTROL_ONLY_DEVICE" >> Makefile
+		echo "CFLAGS=-Wall -g -std=c99 -Os -I\$(INCLUDE) \$(CONTROLLER) -DF_CPU=\$(F_CPU) -DF_USB=\$(F_USB) -DMCU=\$(MCU) -DARCH=\$(ARCH) -DBOARD=\$(BOARD) -DF_CLOCK=\$(F_CLOCK) \$(USBFLAGS)" >> Makefile
 	fi
 	echo "LFLAGS=-L\$(LIB)" >> Makefile
 	echo "" >> Makefile
@@ -459,10 +462,12 @@ else
 		echo "	avrdude -p m32u4 -P /dev/ttyACM0 -c avr109 -U flash:w:$<:i" >> Makefile
 		echo "	make build" >> Makefile
 		echo "" >> Makefile
-		echo "$(BIN)/${NAME}.elf: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
+		echo "\$(BIN)/${NAME}.elf: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
+		echo "	\$(MKDIR) \$(BIN)" >> Makefile
 		echo "	\$(CC) \$(CONTROLLER) -o \$@ \$^" >> Makefile
 		echo "" >> Makefile
 		echo "\$(BIN)/${NAME}.hex: \$(BIN)/${NAME}.elf" >> Makefile
+		echo "	\$(MKDIR) \$(BIN)" >> Makefile
 		echo "	avr-objcopy -j .text -j .data -O ihex \$^ \$@" >> Makefile
 		echo "" >> Makefile
 		echo "${NAME}: flash" >> Makefile
