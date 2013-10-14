@@ -397,11 +397,11 @@ else
 	echo "" >> Makefile
 	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
 	then
-		echo ".PHONY: all time help installdep version major minor build clean commit install uninstall doc debug leakcheck profile run trac strip" >> Makefile
+		echo ".PHONY: all time help installdep version major minor build clean commit install uninstall doc debug leakcheck profile run trac strip ${NAME}" >> Makefile
 	fi
 	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
 	then
-		echo ".PHONY: all time help installdep version major minor build clean commit doc trac strip flash ${NAME}" >> Makefile
+		echo ".PHONY: all time help installdep version major minor build clean commit doc trac flash ${NAME}" >> Makefile
 	fi
 	echo "" >> Makefile
 	echo "all: ${NAME}" >> Makefile
@@ -417,7 +417,6 @@ else
 	echo "	\$(ECHO) \"version\"" >> Makefile
 	echo "	\$(ECHO) \"clean\"" >> Makefile
 	echo "	\$(ECHO) \"installdep\"" >> Makefile
-	echo "	\$(ECHO) \"strip\"" >> Makefile
 	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
 	then
 		echo "	\$(ECHO) \"install\"" >> Makefile
@@ -425,6 +424,8 @@ else
 		echo "	\$(ECHO) \"debug\"" >> Makefile
 		echo "	\$(ECHO) \"leakcheck\"" >> Makefile
 		echo "	\$(ECHO) \"profile\"" >> Makefile
+		echo "	\$(ECHO) \"run\"" >> Makefile
+		echo "	\$(ECHO) \"strip\"" >> Makefile
 	fi
 	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
 	then
@@ -504,6 +505,9 @@ else
 		echo "time: \$(TARGET)" >> Makefile
 		echo "	time \$(TARGET) \$(ARGS)" >> Makefile
 		echo "" >> Makefile
+		echo "" >> Makefile
+		echo "strip: \$(TARGET)" >> Makefile
+		echo "	strip -s \$<" >> Makefile
 	fi
 	echo "\$(LIB)/lib${NAME}.a: \$(MODULES)" >> Makefile
 	echo "	\$(MKDIR) \$(LIB)" >> Makefile
@@ -582,9 +586,6 @@ else
 	echo "" >> Makefile
 	echo "trac:" >> Makefile
 	echo "	tracd -s --port 8000 ./.trac &" >> Makefile
-	echo "" >> Makefile
-	echo "strip: \$(TARGET)" >> Makefile
-	echo "	strip -s \$<" >> Makefile
 	echo "created Makefile"
 fi
 
