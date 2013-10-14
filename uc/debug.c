@@ -1,11 +1,22 @@
+#ifdef DEBUG
+
+#include "led.h"
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "debug.h"
+
 u8 DEBUGMODE;
 u8 DEBUGSTATE;
 Led* DEBUGLED;
+Gpio* DEBUGGPIO;
 
-void initDebug(Led* led, u8 port, u8 bit, u8 onState)
+void initDebug(u8 port, u8 bit, u8 onState)
 {
 	DEBUGMODE = 0;
 	DEBUGSTATE = 0;
+
+	initLed(DEBUGLED, DEBUGGPIO, port, bit, onState);
+	offLed(DEBUGLED);
 
 	//normal mode
 	TCCR0B &= ~(1<<WGM02);
@@ -47,10 +58,10 @@ ISR(TIMER0_OVF_vect)//each 100µs
 		case 0:
 			switch (DEBUGSTATE)
 			{
-				case 10:
+				case 90:
 					onLed(DEBUGLED);
 					break;
-				case 11:
+				case 100:
 					offLed(DEBUGLED);
 					DEBUGSTATE = 0;
 					break;
@@ -61,3 +72,5 @@ ISR(TIMER0_OVF_vect)//each 100µs
 	}
 	TCNT0 = 256-157;//each 10 ms
 }
+
+#endif

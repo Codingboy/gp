@@ -73,7 +73,7 @@ ISR(TIMER1_COMPA_vect)
 int main(int argc, char* argv[])
 {
 	Led led1;
-	initLed(&led1, 1, 0, 0);
+	initLed(&led1, 1, 0, 1);
 	onLed(&led1);
 	while (true)
 	{

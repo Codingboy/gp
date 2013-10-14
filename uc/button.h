@@ -1,3 +1,7 @@
+/**
+ * Highlevel API for handling simple buttons.
+ */
+
 #ifndef LED_H
 #define LED_H
 

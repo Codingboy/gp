@@ -1,3 +1,7 @@
+/**
+ * Highlevel API for handling simple LEDs.
+ */
+
 #ifndef LED_H
 #define LED_H
 

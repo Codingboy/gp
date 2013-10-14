@@ -1,3 +1,7 @@
+/**
+ * Lowlevel API for handling io with any connected hardware.
+ */
+
 #ifndef GPIO_H
 #define GPIO_H
 
@@ -59,7 +63,9 @@ void clearGpioOut(Gpio* gpio);
 void toggleGpioOut(Gpio* gpio);
 
 /**
- * Undefined
+ * Checks idf the output is set or cleared.
+ * @param[in] gpio used Gpio
+ * @return 0 if clear, 1 if set
  */
 u8 getGpioOut(Gpio* gpio);
 

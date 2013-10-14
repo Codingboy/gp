@@ -7,6 +7,7 @@ void initLed(Led* led, Gpio* gpio, u8 port, u8 bit, u8 onState)
 	led->onState = onState;
 	
 	ctlGpioOut(gpio);
+	offLed(led);
 }
 
 void onLed(Led* led)
@@ -35,7 +36,7 @@ void offLed(Led* led)
 
 void toggleLed(Led* led)
 {
-
+	toggleGpioOut(led);
 }
 
 u8 checkLed(Led* led)

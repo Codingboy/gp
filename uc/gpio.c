@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include <avr/io.h>
 
 void initGpio(Gpio* gpio, u8 port, u8 bit)
 {
@@ -104,12 +105,29 @@ void clearGpioOut(Gpio* gpio)
 	}
 }
 
-void toggleGpioOutGpio* gpio
+void toggleGpioOut(Gpio* gpio)
 {
-	//TODO
+	switch (gpio->port)
+	{
+		case 1:
+			PORTB = PORTB ^ gpio->bitmask;
+			break;
+		case 2:
+			PORTC = PORTC ^ gpio->bitmask;
+			break;
+		case 3:
+			PORTD = PORTD ^ gpio->bitmask;
+			break;
+		case 4:
+			PORTE = PORTE ^ gpio->bitmask;
+			break;
+		case 5:
+			PORTF = PORTF ^ gpio->bitmask;
+			break;
+	}
 }
 
-u8 getGpioOutGpio* gpio
+u8 getGpioOut(Gpio* gpio)
 {
 	switch (gpio->port)
 	{
@@ -127,7 +145,7 @@ u8 getGpioOutGpio* gpio
 	return 0;
 }
 
-u8 getGpioInGpio* gpio
+u8 getGpioIn(Gpio* gpio)
 {
 	switch (gpio->port)
 	{
