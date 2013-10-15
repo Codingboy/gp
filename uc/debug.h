@@ -6,7 +6,7 @@
 /**
  * Initialises the debug LED.
  */
-void initDebug(u8 port, u8 bit, u8 onState);
+void initDebug();
 
 /**
  * Sets a debugmode.

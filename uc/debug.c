@@ -10,12 +10,12 @@ u8 DEBUGSTATE;
 Led* DEBUGLED;
 Gpio* DEBUGGPIO;
 
-void initDebug(u8 port, u8 bit, u8 onState)
+void initDebug()
 {
 	DEBUGMODE = 0;
 	DEBUGSTATE = 0;
 
-	initLed(DEBUGLED, DEBUGGPIO, port, bit, onState);
+	initLed(DEBUGLED, DEBUGGPIO, 4, 6, 1);
 	offLed(DEBUGLED);
 
 	//normal mode
@@ -35,12 +35,12 @@ void initDebug(u8 port, u8 bit, u8 onState)
 	TCCR0B |= 1<<CS02;
 	TCCR0B &= ~(1<<CS01);
 	TCCR0B |= 1<<CS00;
-	
+
 	TCNT0 = 256-157;//each 10 ms
 
 	//enable overflow interrupts
 	TIMSK0 |= 1<<TOIE0;
-	
+
 	sei();
 }
 
@@ -50,7 +50,7 @@ void setDebug(u8 mode)
 	DEBUGSTATE = 0;
 }
 
-ISR(TIMER0_OVF_vect)//each 100µs
+ISR(TIMER0_OVF_vect)//each 10 ms
 {
 	DEBUGSTATE++;
 	switch (DEBUGMODE)
@@ -58,10 +58,10 @@ ISR(TIMER0_OVF_vect)//each 100µs
 		case 0:
 			switch (DEBUGSTATE)
 			{
-				case 90:
+				case 190:
 					onLed(DEBUGLED);
 					break;
-				case 100:
+				case 200:
 					offLed(DEBUGLED);
 					DEBUGSTATE = 0;
 					break;
