@@ -15,7 +15,6 @@ void EVENT_USB_Device_ControlRequest(void)
 			switch (USB_ControlRequest.bRequest)
 			{
 				default:
-					Endpoint_ClearStatusStage();
 					break;
 			}
 		}
@@ -24,7 +23,6 @@ void EVENT_USB_Device_ControlRequest(void)
 			switch (USB_ControlRequest.bRequest)
 			{
 				default:
-					Endpoint_ClearStatusStage();
 					break;
 			}
 		}
