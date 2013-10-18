@@ -10,12 +10,18 @@ int main(int argc, char* argv[])
 {
 	libusb_init(NULL);
 	libusb_device_handle* dev = NULL;
+	int initialTrys = 60;
 	while (dev == NULL)
 	{
 		libusb_device_handle* dev = libusb_open_device_with_vid_pid(NULL, VID, DID);
 		if (dev == NULL)
 		{
 			printf("ERROR: device could not be opened\n");
+			initialTrys--;
+			if (initialTrys == 0)
+			{
+				return -1;
+			}
 			sleep(1);
 		}
 	}
