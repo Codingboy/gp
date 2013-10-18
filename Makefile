@@ -7,8 +7,10 @@ help:
 install:
 	mkdir -p /etc/gp/images/
 	mkdir -p /etc/gp/licenses/
+	mkdir -p /etc/gp/uc/
 	cp images/* /etc/gp/images/
 	cp licenses/* /etc/gp/licenses/
+	cp uc/* /etc/gp/uc/
 	chmod -R a+r /etc/gp/
 	cp gp /bin/
 	chmod a+x /bin/gp

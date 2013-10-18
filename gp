@@ -253,6 +253,11 @@ else
 	echo "created include/version.${HEADERFILEEXTENSION}"
 fi
 
+if [ "$LANGUAGE" = "uc" ]
+then
+	cp /etc/gp/uc/*.h .
+fi
+
 cd ..
 cd src
 
@@ -273,6 +278,11 @@ else
 	echo "	return 0;" >> ${NAME}.${SOURCEFILEEXTENSION}
 	echo "}" >> ${NAME}.${SOURCEFILEEXTENSION}
 	echo "created src/${NAME}.${SOURCEFILEEXTENSION}"
+fi
+
+if [ "$LANGUAGE" = "uc" ]
+then
+	cp /etc/gp/uc/*.c .
 fi
 
 cd ..
@@ -392,7 +402,12 @@ else
 	echo "ECHO=@echo" >> Makefile
 	echo "INSTALL=apt-get install -y" >> Makefile
 	echo "" >> Makefile
-	echo "MODULES_=" >> Makefile
+	if [ "$LANGUAGE" = "uc" ]
+	then
+		echo "MODULES_=debug led button gpio" >> Makefile
+	else
+		echo "MODULES_=" >> Makefile
+	fi
 	echo "MODULES=\$(addsuffix .o, \$(addprefix \$(OBJ)/, \$(MODULES_)))" >> Makefile
 	echo "" >> Makefile
 	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
