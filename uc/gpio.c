@@ -4,7 +4,7 @@
 void initGpio(Gpio* gpio, u8 port, u8 bit)
 {
 	gpio->port = port;
-	gpio->bitmask = bit;
+	gpio->bitmask = 1<<bit;
 }
 
 void ctlGpioIn(Gpio* gpio)
