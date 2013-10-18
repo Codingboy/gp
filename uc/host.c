@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <libusb.h>
+#include <stdbool.h>
 
 #define VID 0x1337
 #define DID 0x1337
