@@ -384,12 +384,12 @@ else
 	fi
 	if [ "$LANGUAGE" = "c++" ]
 	then
-		echo "CFLAGS=-std=c++0x -g -Wall -Os -c -I\$(INCLUDE)" >> Makefile
+		echo "CFLAGS=-std=c++0x -g -Wall -c -Os -c -I\$(INCLUDE)" >> Makefile
 	fi
 	if [ "$LANGUAGE" = "uc" ]
 	then
 		echo "USBFLAGS=-DUSE_FLASH_DESCRIPTORS -DUSE_STATIC_OPTIONS=\"(USE_DEVICE_OPT_FULLSPEED | USB_OPT_AUTO_PLL)\" -DUSB_DEVICE_ONLY -DCONTROL_ONLY_DEVICE" >> Makefile
-		echo "CFLAGS=-Wall -g -std=c99 -Os -I\$(INCLUDE) \$(CONTROLLER) -DF_CPU=\$(F_CPU) -DF_USB=\$(F_USB) -DMCU=\$(MCU) -DARCH=\$(ARCH) -DBOARD=\$(BOARD) -DF_CLOCK=\$(F_CLOCK) \$(USBFLAGS)" >> Makefile
+		echo "CFLAGS=-Wall -g -c -std=c99 -Os -I\$(INCLUDE) \$(CONTROLLER) -DF_CPU=\$(F_CPU) -DF_USB=\$(F_USB) -DMCU=\$(MCU) -DARCH=\$(ARCH) -DBOARD=\$(BOARD) -DF_CLOCK=\$(F_CLOCK) \$(USBFLAGS)" >> Makefile
 	fi
 	echo "LFLAGS=-L\$(LIB)" >> Makefile
 	echo "" >> Makefile
