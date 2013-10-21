@@ -353,7 +353,7 @@ if [ -e "Makefile" ]
 then
 	echo "Makefile already exists"
 else
-	echo "TARGET=\$(BIN)/${NAME}" > Makefile
+	echo "TARGET=\$(BINDIR)/${NAME}" > Makefile
 	echo "ARGS=" >> Makefile
 	echo "" >> Makefile
 	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
@@ -367,15 +367,15 @@ else
 		echo "CONTROLLER=-mmcu=\$(MCU)" >> Makefile
 	fi
 	echo "" >> Makefile
-	echo "BIN=bin" >> Makefile
-	echo "SBIN=sbin" >> Makefile
-	echo "SRC=src" >> Makefile
-	echo "OBJ=obj" >> Makefile
-	echo "INCLUDE=include" >> Makefile
-	echo "LIB=lib" >> Makefile
-	echo "EXTLIB=extlib" >> Makefile
-	echo "SCRIPT=script" >> Makefile
-	echo "DOC=doc" >> Makefile
+	echo "BINDIR=bin" >> Makefile
+	echo "SBINDIR=sbin" >> Makefile
+	echo "SRCDIR=src" >> Makefile
+	echo "OBJDIR=obj" >> Makefile
+	echo "INCLUDEDIR=include" >> Makefile
+	echo "LIBDIR=lib" >> Makefile
+	echo "EXTLIBDIR=extlib" >> Makefile
+	echo "SCRIPTDIR=script" >> Makefile
+	echo "DOCDIR=doc" >> Makefile
 	echo "" >> Makefile
 	echo "CC=${COMPILER}" >> Makefile
 	if [ "$LANGUAGE" = "c" ]
@@ -448,7 +448,6 @@ else
 	fi
 	echo "" >> Makefile
 	echo "installdep:" >> Makefile
-	echo "	\$(INSTALL) ${COMPILER}" >> Makefile
 	echo "	\$(INSTALL) doxygen" >> Makefile
 	echo "	\$(INSTALL) git" >> Makefile
 	echo "	\$(INSTALL) firefox" >> Makefile
@@ -459,6 +458,7 @@ else
 	echo "	\$(INSTALL) trac-git" >> Makefile
 	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
 	then
+		echo "	\$(INSTALL) ${COMPILER}" >> Makefile
 		echo "	\$(INSTALL) valgrind" >> Makefile
 		echo "	\$(INSTALL) kcachegrind" >> Makefile
 		echo "	\$(INSTALL) ddd" >> Makefile
@@ -474,36 +474,28 @@ else
 	echo "" >> Makefile
 	if [ "$LANGUAGE" = "uc" ] || [ "$LANGUAGE" = "uc++" ]
 	then
-		echo "flash: \$(BIN)/${NAME}.hex" >> Makefile
+		echo "flash: \$(BINDIR)/${NAME}.hex" >> Makefile
 		echo "	avrdude -p m32u4 -P /dev/ttyACM0 -c avr109 -U flash:w:$<:i" >> Makefile
 		echo "	make build" >> Makefile
-		echo "" >> Makefile
-		echo "\$(BIN)/${NAME}.elf: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
-		echo "	\$(MKDIR) \$(BIN)" >> Makefile
-		echo "	\$(CC) \$(CONTROLLER) -o \$@ \$^" >> Makefile
-		echo "" >> Makefile
-		echo "\$(BIN)/${NAME}.hex: \$(BIN)/${NAME}.elf" >> Makefile
-		echo "	\$(MKDIR) \$(BIN)" >> Makefile
-		echo "	avr-objcopy -j .text -j .data -O ihex \$^ \$@" >> Makefile
 		echo "" >> Makefile
 		echo "${NAME}: flash" >> Makefile
 		echo "" >> Makefile
 	fi
 	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
 	then
-		echo "\$(BIN)/${NAME}: \$(OBJ)/${NAME}.o \$(MODULES)" >> Makefile
-		echo "	\$(MKDIR) \$(BIN)" >> Makefile
+		echo "\$(BINDIR)/${NAME}: \$(OBJDIR)/${NAME}.o \$(MODULES)" >> Makefile
+		echo "	\$(MKDIR) \$(BINDIR)" >> Makefile
 		echo "	\$(CC) -o \$@ \$^ \$(LFLAGS)" >> Makefile
 		echo "	make build" >> Makefile
 		echo "" >> Makefile
 		echo "install: all" >> Makefile
-		echo "	\$(CP) \$(BIN)/${NAME} /bin/" >> Makefile
+		echo "	\$(CP) \$(BINDIR)/${NAME} /bin/" >> Makefile
 		echo "	chmod a+x /bin/${NAME}" >> Makefile
 		echo "" >> Makefile
 		echo "uninstall: all" >> Makefile
 		echo "	\$(RM) /bin/${NAME}" >> Makefile
 		echo "" >> Makefile
-		echo "${NAME}: \$(BIN)/${NAME}" >> Makefile
+		echo "${NAME}: \$(BINDIR)/${NAME}" >> Makefile
 		echo "" >> Makefile
 		echo "debug: \$(TARGET)" >> Makefile
 		echo "	ddd \$(TARGET) \$(ARGS)" >> Makefile
@@ -524,16 +516,16 @@ else
 		echo "strip: \$(TARGET)" >> Makefile
 		echo "	strip -s \$<" >> Makefile
 	fi
-	echo "\$(LIB)/lib${NAME}.a: \$(MODULES)" >> Makefile
-	echo "	\$(MKDIR) \$(LIB)" >> Makefile
+	echo "\$(LIBDIR)/lib${NAME}.a: \$(MODULES)" >> Makefile
+	echo "	\$(MKDIR) \$(LIBDIR)" >> Makefile
 	echo "	ar r \$@ \$^" >> Makefile
 	echo "" >> Makefile
 	echo "major:" >> Makefile
-	echo "	python \$(SCRIPT)/v.py \$(INCLUDE)/version.${HEADERFILEEXTENSION} --major" >> Makefile
-	echo "	git add \$(SRC)/*" >> Makefile
-	echo "	git add \$(INCLUDE)/*" >> Makefile
+	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} --major" >> Makefile
+	echo "	git add \$(SRCDIR)/*" >> Makefile
+	echo "	git add \$(INCLUDEDIR)/*" >> Makefile
 	echo "	git commit -a" >> Makefile
-	echo "	VERSION=\$\$(python \$(SCRIPT)/v.py \$(INCLUDE)/version.hpp);\\" >> Makefile
+	echo "	VERSION=\$\$(python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.hpp);\\" >> Makefile
 	echo "	VERSION=\"v\"\$\$VERSION;\\" >> Makefile
 	echo "	git tag -a \$\$VERSION -m \"major build\";\\" >> Makefile
 	echo "	trac-admin ./.trac version add \$\$VERSION" >> Makefile
@@ -544,11 +536,11 @@ else
 	echo "	git checkout topic" >> Makefile
 	echo "" >> Makefile
 	echo "minor:" >> Makefile
-	echo "	python \$(SCRIPT)/v.py \$(INCLUDE)/version.${HEADERFILEEXTENSION} --minor" >> Makefile
-	echo "	git add \$(SRC)/*" >> Makefile
-	echo "	git add \$(INCLUDE)/*" >> Makefile
+	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} --minor" >> Makefile
+	echo "	git add \$(SRCDIR)/*" >> Makefile
+	echo "	git add \$(INCLUDEDIR)/*" >> Makefile
 	echo "	git commit -a" >> Makefile
-	echo "	VERSION=\$\$(python \$(SCRIPT)/v.py \$(INCLUDE)/version.hpp);\\" >> Makefile
+	echo "	VERSION=\$\$(python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.hpp);\\" >> Makefile
 	echo "	VERSION=\"v\"\$\$VERSION;\\" >> Makefile
 	echo "	git tag -a \$\$VERSION -m \"minor build\";\\" >> Makefile
 	echo "	trac-admin ./.trac version add \$\$VERSION" >> Makefile
@@ -557,46 +549,46 @@ else
 	echo "	git checkout topic" >> Makefile
 	echo "" >> Makefile
 	echo "build:" >> Makefile
-	echo "	python \$(SCRIPT)/v.py \$(INCLUDE)/version.${HEADERFILEEXTENSION} --build" >> Makefile
-	echo "	git add \$(SRC)/*" >> Makefile
-	echo "	git add \$(INCLUDE)/*" >> Makefile
+	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} --build" >> Makefile
+	echo "	git add \$(SRCDIR)/*" >> Makefile
+	echo "	git add \$(INCLUDEDIR)/*" >> Makefile
 	echo "	git commit -am \"normal build\"" >> Makefile
-	echo "	VERSION=\$\$(python \$(SCRIPT)/v.py \$(INCLUDE)/version.hpp);\\" >> Makefile
+	echo "	VERSION=\$\$(python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.hpp);\\" >> Makefile
 	echo "	VERSION=\"v\"\$\$VERSION;\\" >> Makefile
 	echo "	git tag -a \$\$VERSION -m \"normal build\";\\" >> Makefile
 	echo "	trac-admin ./.trac version add \$\$VERSION" >> Makefile
 	echo "" >> Makefile
 	echo "commit:" >> Makefile
-	echo "	git add \$(SRC)" >> Makefile
-	echo "	git add \$(INCLUDE)" >> Makefile
+	echo "	git add \$(SRCDIR)" >> Makefile
+	echo "	git add \$(INCLUDEDIR)" >> Makefile
 	echo "	git commit -a" >> Makefile
 	echo "" >> Makefile
 	echo "version:" >> Makefile
-	echo "	python \$(SCRIPT)/v.py \$(INCLUDE)/version.${HEADERFILEEXTENSION}" >> Makefile
+	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION}" >> Makefile
 	echo "" >> Makefile
 	echo "clean:" >> Makefile
-	echo "	\$(RMDIR) \$(BIN)" >> Makefile
-	echo "	\$(RMDIR) \$(OBJ)" >> Makefile
-	echo "	\$(RMDIR) \$(LIB)" >> Makefile
-	echo "	\$(RMDIR) \$(DOC)" >> Makefile
+	echo "	\$(RMDIR) \$(BINDIR)" >> Makefile
+	echo "	\$(RMDIR) \$(OBJDIR)" >> Makefile
+	echo "	\$(RMDIR) \$(LIBDIR)" >> Makefile
+	echo "	\$(RMDIR) \$(DOCDIR)" >> Makefile
 	echo "	\$(RM) cachegrind.*" >> Makefile
 	echo "	\$(RM) core" >> Makefile
 	echo "	\$(RM) vgcore.*" >> Makefile
-	echo "	\$(RM) \$(SRC)/.*.swp" >> Makefile
-	echo "	\$(RM) \$(INCLUDE)/.*.swp" >> Makefile
-	echo "	\$(RM) \$(SRC)/*~" >> Makefile
-	echo "	\$(RM) \$(INCLUDE)/*~" >> Makefile
+	echo "	\$(RM) \$(SRCDIR)/.*.swp" >> Makefile
+	echo "	\$(RM) \$(INCLUDEDIR)/.*.swp" >> Makefile
+	echo "	\$(RM) \$(SRCDIR)/*~" >> Makefile
+	echo "	\$(RM) \$(INCLUDEDIR)/*~" >> Makefile
 	echo "	\$(RM) doxygen.log" >> Makefile
 	echo "" >> Makefile
-	echo "doc: Doxyfile \$(SRC)/* \$(INCLUDE)/* mainpage" >> Makefile
-	echo "	\$(MKDIR) \$(DOC)" >> Makefile
+	echo "doc: Doxyfile \$(SRCDIR)/* \$(INCLUDEDIR)/* mainpage" >> Makefile
+	echo "	\$(MKDIR) \$(DOCDIR)" >> Makefile
 	echo "	doxygen" >> Makefile
 	echo "" >> Makefile
-	echo "\$(OBJ)/%.o: \$(SRC)/%.${SOURCEFILEEXTENSION} \$(INCLUDE)/%.${HEADERFILEEXTENSION}" >> Makefile
-	echo "	\$(MKDIR) \$(OBJ)" >> Makefile
+	echo "\$(OBJDIR)/%.o: \$(SRCDIR)/%.${SOURCEFILEEXTENSION} \$(INCLUDEDIR)/%.${HEADERFILEEXTENSION}" >> Makefile
+	echo "	\$(MKDIR) \$(OBJDIR)" >> Makefile
 	echo "	\$(CC) \$(CFLAGS) -o \$@ \$<" >> Makefile
 	echo "" >> Makefile
-	echo "\$(INCLUDE)/%.${HEADERFILEEXTENSION}:" >> Makefile
+	echo "\$(INCLUDEDIR)/%.${HEADERFILEEXTENSION}:" >> Makefile
 	echo "	touch \$@" >> Makefile
 	echo "" >> Makefile
 	echo "trac:" >> Makefile
