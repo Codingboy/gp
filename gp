@@ -421,6 +421,27 @@ else
 	echo "" >> Makefile
 	echo "all: ${NAME}" >> Makefile
 	echo "" >> Makefile
+	echo "\$(SRCDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
+	echo "\$(INCLUDEDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
+	echo "\$(OBJDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
+	echo "\$(BINDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
+	echo "\$(LIBDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
+	echo "\$(EXTLIBDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
+	echo "\$(DOCDIR):" >> Makefile
+	echo "	$(MKDIR) $@" >> Makefile
+	echo "" >> Makefile
 	echo "help:" >> Makefile
 	echo "	\$(ECHO) \"${NAME}\"" >> Makefile
 	echo "	\$(ECHO) \"all\"" >> Makefile
@@ -483,8 +504,7 @@ else
 	fi
 	if [ "$LANGUAGE" = "c" ] || [ "$LANGUAGE" = "c++" ]
 	then
-		echo "\$(BINDIR)/${NAME}: \$(OBJDIR)/${NAME}.o \$(MODULES)" >> Makefile
-		echo "	\$(MKDIR) \$(BINDIR)" >> Makefile
+		echo "\$(BINDIR)/${NAME}: \$(BINDIR) \$(OBJDIR)/${NAME}.o \$(MODULES)" >> Makefile
 		echo "	\$(CC) -o \$@ \$^ \$(LFLAGS)" >> Makefile
 		echo "	make build" >> Makefile
 		echo "" >> Makefile
@@ -512,15 +532,14 @@ else
 		echo "time: \$(TARGET)" >> Makefile
 		echo "	time \$(TARGET) \$(ARGS)" >> Makefile
 		echo "" >> Makefile
-		echo "" >> Makefile
 		echo "strip: \$(TARGET)" >> Makefile
 		echo "	strip -s \$<" >> Makefile
+		echo "" >> Makefile
+		echo "\$(LIBDIR)/lib${NAME}.a: \$(LIBDIR) \$(MODULES)" >> Makefile
+		echo "	ar r \$@ \$^" >> Makefile
+		echo "" >> Makefile
 	fi
-	echo "\$(LIBDIR)/lib${NAME}.a: \$(MODULES)" >> Makefile
-	echo "	\$(MKDIR) \$(LIBDIR)" >> Makefile
-	echo "	ar r \$@ \$^" >> Makefile
-	echo "" >> Makefile
-	echo "major:" >> Makefile
+	echo "major: \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} \$(SRCDIR) \$(INCLUDEDIR)" >> Makefile
 	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} --major" >> Makefile
 	echo "	git add \$(SRCDIR)/*" >> Makefile
 	echo "	git add \$(INCLUDEDIR)/*" >> Makefile
@@ -535,7 +554,7 @@ else
 	echo "	git merge development" >> Makefile
 	echo "	git checkout topic" >> Makefile
 	echo "" >> Makefile
-	echo "minor:" >> Makefile
+	echo "minor: \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} \$(SRCDIR) \$(INCLUDEDIR)" >> Makefile
 	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} --minor" >> Makefile
 	echo "	git add \$(SRCDIR)/*" >> Makefile
 	echo "	git add \$(INCLUDEDIR)/*" >> Makefile
@@ -548,7 +567,7 @@ else
 	echo "	git merge topic" >> Makefile
 	echo "	git checkout topic" >> Makefile
 	echo "" >> Makefile
-	echo "build:" >> Makefile
+	echo "build: \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} \$(SRCDIR) \$(INCLUDEDIR)" >> Makefile
 	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION} --build" >> Makefile
 	echo "	git add \$(SRCDIR)/*" >> Makefile
 	echo "	git add \$(INCLUDEDIR)/*" >> Makefile
@@ -558,12 +577,12 @@ else
 	echo "	git tag -a \$\$VERSION -m \"normal build\";\\" >> Makefile
 	echo "	trac-admin ./.trac version add \$\$VERSION" >> Makefile
 	echo "" >> Makefile
-	echo "commit:" >> Makefile
+	echo "commit: \$(SRCDIR) \$(INCLUDEDIR)" >> Makefile
 	echo "	git add \$(SRCDIR)" >> Makefile
 	echo "	git add \$(INCLUDEDIR)" >> Makefile
 	echo "	git commit -a" >> Makefile
 	echo "" >> Makefile
-	echo "version:" >> Makefile
+	echo "version: \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION}" >> Makefile
 	echo "	python \$(SCRIPTDIR)/v.py \$(INCLUDEDIR)/version.${HEADERFILEEXTENSION}" >> Makefile
 	echo "" >> Makefile
 	echo "clean:" >> Makefile
@@ -580,16 +599,11 @@ else
 	echo "	\$(RM) \$(INCLUDEDIR)/*~" >> Makefile
 	echo "	\$(RM) doxygen.log" >> Makefile
 	echo "" >> Makefile
-	echo "doc: Doxyfile \$(SRCDIR)/* \$(INCLUDEDIR)/* mainpage" >> Makefile
-	echo "	\$(MKDIR) \$(DOCDIR)" >> Makefile
+	echo "doc: Doxyfile \$(SRCDIR) \$(INCLUDEDIR) \$(DOCDIR) \$(SRCDIR)/* \$(INCLUDEDIR)/* mainpage" >> Makefile
 	echo "	doxygen" >> Makefile
 	echo "" >> Makefile
-	echo "\$(OBJDIR)/%.o: \$(SRCDIR)/%.${SOURCEFILEEXTENSION} \$(INCLUDEDIR)/%.${HEADERFILEEXTENSION}" >> Makefile
-	echo "	\$(MKDIR) \$(OBJDIR)" >> Makefile
+	echo "\$(OBJDIR)/%.o: \$(OBJDIR) \$(SRCDIR)/%.${SOURCEFILEEXTENSION}" >> Makefile
 	echo "	\$(CC) \$(CFLAGS) -o \$@ \$<" >> Makefile
-	echo "" >> Makefile
-	echo "\$(INCLUDEDIR)/%.${HEADERFILEEXTENSION}:" >> Makefile
-	echo "	touch \$@" >> Makefile
 	echo "" >> Makefile
 	echo "trac:" >> Makefile
 	echo "	tracd -s --port 8000 ./.trac &" >> Makefile
