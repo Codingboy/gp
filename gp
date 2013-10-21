@@ -353,6 +353,16 @@ if [ -e "Makefile" ]
 then
 	echo "Makefile already exists"
 else
+	echo "BINDIR=bin" >> Makefile
+	echo "SBINDIR=sbin" >> Makefile
+	echo "SRCDIR=src" >> Makefile
+	echo "OBJDIR=obj" >> Makefile
+	echo "INCLUDEDIR=include" >> Makefile
+	echo "LIBDIR=lib" >> Makefile
+	echo "EXTLIBDIR=extlib" >> Makefile
+	echo "SCRIPTDIR=script" >> Makefile
+	echo "DOCDIR=doc" >> Makefile
+	echo "" >> Makefile
 	echo "TARGET=\$(BINDIR)/${NAME}" > Makefile
 	echo "ARGS=" >> Makefile
 	echo "" >> Makefile
@@ -366,16 +376,6 @@ else
 		echo "F_CLOCK=\$(F_CPU)" >> Makefile
 		echo "CONTROLLER=-mmcu=\$(MCU)" >> Makefile
 	fi
-	echo "" >> Makefile
-	echo "BINDIR=bin" >> Makefile
-	echo "SBINDIR=sbin" >> Makefile
-	echo "SRCDIR=src" >> Makefile
-	echo "OBJDIR=obj" >> Makefile
-	echo "INCLUDEDIR=include" >> Makefile
-	echo "LIBDIR=lib" >> Makefile
-	echo "EXTLIBDIR=extlib" >> Makefile
-	echo "SCRIPTDIR=script" >> Makefile
-	echo "DOCDIR=doc" >> Makefile
 	echo "" >> Makefile
 	echo "CC=${COMPILER}" >> Makefile
 	if [ "$LANGUAGE" = "c" ]
