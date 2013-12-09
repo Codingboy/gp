@@ -166,6 +166,8 @@ then
 	return 1
 fi
 
+gl -l $LICENSE -d $DEVELOPER
+
 NAME=$PROJECTNAME
 mkdir -pv "$NAME"
 cd $NAME
@@ -311,7 +313,7 @@ else
 	echo "created .gitignore"
 fi
 
-if [ -e "README" ]
+if [ -e "README.md" ]
 then
 	echo "README already exists"
 else
@@ -336,7 +338,7 @@ else
 	echo "created README"
 fi
 
-if [ -e "INSTALL" ]
+if [ -e "INSTALL.md" ]
 then
 	echo "INSTALL already exists"
 else
@@ -608,116 +610,6 @@ else
 	echo "trac:" >> Makefile
 	echo "	tracd -s --port 8000 ./.trac &" >> Makefile
 	echo "created Makefile"
-fi
-
-if [ -e "COPYRIGHT" ]
-then
-	echo "COPYRIGHT already exists"
-else
-	if [ "$LICENSE" = "mit" ]
-	then
-		echo "Copyright (c) $(date +%Y) ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under the MIT License. To view this license, open LICENSE.txt." >> COPYRIGHT.txt
-		echo "The MIT License (MIT)" > LICENSE.txt
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" >> LICENSE.txt
-		cat /etc/gp/licenses/mit.txt >> LICENSE.txt
-		cp /etc/gp/images/opensource.png OPENSOURCE.png
-		cp /etc/gp/images/opensourcelicense.png OPENSOURCELICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "boost" ]
-	then
-		echo "Copyright (c) $(date +%Y) ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under the Boost Software License. To view a copy of this license, visit http://www.boost.org/LICENSE_1_0.txt or open LICENSE.txt." >> COPYRIGHT.txt
-		cat /etc/gp/licenses/boost.txt > LICENSE.txt
-		cp /etc/gp/images/opensource.png OPENSOURCE.png
-		cp /etc/gp/images/opensourcelicense.png OPENSOURCELICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "bsd2" ]
-	then
-		echo "Copyright (c) $(date +%Y) ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under the BSD 2-Clause License. To view this license, open LICENSE.txt." >> COPYRIGHT.txt
-		echo "Copyright (c) $(date +%Y), ${DEVELOPER}" > LICENSE.txt
-		echo "All rights reserved." >> LICENSE.txt
-		echo "" >> LICENSE.txt
-		cat /etc/gp/licenses/bsd2.txt >> LICENSE.txt
-		cp /etc/gp/images/opensource.png OPENSOURCE.png
-		cp /etc/gp/images/opensourcelicense.png OPENSOURCELICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-zero" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Zero 1.0 Universal License. To view a copy of this license, visit http://creativecommons.org/publicdomain/zero/1.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-zero.png LICENSE.png
-		cp /etc/gp/images/freeculturallicense.png FREECULTURALLICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-by" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Attribution 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-by.png LICENSE.png
-		cp /etc/gp/images/freeculturallicense.png FREECULTURALLICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-by-sa" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-by-sa.png LICENSE.png
-		cp /etc/gp/images/freeculturallicense.png FREECULTURALLICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-by-nc" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Attribution-NonCommercial 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc/3.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-by-nc.png LICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-by-nc-sa" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-by-nc-sa.png LICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-by-nc-nd" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-by-nc-nd.png LICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "cc-by-nd" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under a Creative Commons Attribution-NoDerivs 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nd/3.0/." >> COPYRIGHT.txt
-		cp /etc/gp/images/cc-by-nd.png LICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "gpl" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under the GNU GENERAL PUBLIC LICENSE. To view a copy of this license, visit http://www.gnu.org/licenses/gpl-3.0-standalone.html or open LICENSE.txt." >> COPYRIGHT.txt
-		cat /etc/gp/licenses/gpl3.txt > LICENSE.txt
-		cp /etc/gp/images/gpl3.png LICENSE.png
-		cp /etc/gp/images/opensource.png OPENSOURCE.png
-		cp /etc/gp/images/opensourcelicense.png OPENSOURCELICENSE.png
-		echo "created COPYRIGHT"
-	fi
-	if [ "$LICENSE" = "lgpl" ]
-	then
-		echo "Copyright (c) $(date +%Y)  ${DEVELOPER}" > COPYRIGHT.txt
-		echo "This work is licensed under the GNU LESSER GENERAL PUBLIC LICENSE. To view a copy of this license, visit http://www.gnu.org/licenses/lgpl-3.0-standalone.html or open LICENSE.txt." >> COPYRIGHT.txt
-		cat /etc/gp/licenses/lgpl3.txt > LICENSE.txt
-		cp /etc/gp/images/lgpl3.png LICENSE.png
-		cp /etc/gp/images/opensource.png OPENSOURCE.png
-		cp /etc/gp/images/opensourcelicense.png OPENSOURCELICENSE.png
-		echo "created COPYRIGHT"
-	fi
 fi
 
 if [ -e "Doxyfile" ]

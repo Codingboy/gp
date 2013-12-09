@@ -21,6 +21,9 @@ install:
 	cp ghf /bin/
 	chmod a+x /bin/ghf
 	chmod a+r /bin/ghf
+	cp gl /bin/
+	chmod a+x /bin/gl
+	chmod a+r /bin/gl
 	apt-get install -y python git gcc g++ trac trac-git tar doxygen valgrind kcachegrind gdb ddd
 
 uninstall:
@@ -28,3 +31,4 @@ uninstall:
 	rm -rf /bin/gp
 	rm -rf /bin/ghf
 	rm -rf /bin/gsf
+	rm -rf /bin/gl
